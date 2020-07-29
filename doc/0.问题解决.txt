@@ -1,0 +1,8 @@
+
+1、用Idea创建springboot项目报错，反正我试了没用，用阿里的不香吗？https://start.aliyun.com/
+
+
+
+
+
+

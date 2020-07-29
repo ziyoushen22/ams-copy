@@ -1,0 +1,88 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /ams
+    session:
+      timeout: "PT30M"
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 16MB
+      max-request-size: 32MB
+  freemarker:
+    check-template-location: false
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+  session:
+    store-type: redis
+  redis:
+    database: 0
+    lettuce:
+      pool:
+        max-active: 20
+        max-wait: -1ms
+        max-idle: 10
+        min-idle: 2
+    timeout: 60000
+    cluster:
+      nodes: 10.59.96.1:7000,10.59.96.1:7001,10.59.96.1:7003,10.59.96.1:7004,10.59.96.1:7005
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.59.96.1:3306/riskcontrol_v6?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&serverTimeZone=Aisa/Shanghai
+    username: root
+    password: 1234
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 10
+      min-idle: 5
+      max-active: 50
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 1 from dual
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall
+      use-global-data-source-stat: true
+      connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  kafka:
+    bootstrap-servers: 10.20.112.151:9092   #kafka代理地址
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: wexing-ams
+      enable-auto-commit: true      #消费消息后自动提交
+      auto-commit-interval: 1000    #自动提交频率
+      auto-offset-reset: earliest   #消费规则：从最早开始消费
+      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      value-deserializer: org.apache.kafka.common.serialization.StringSerializer
+mybatis:
+  configuration:
+    #sql语句只打印在控制台
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    #sql语句只打印在文件中
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.example.amscopy.model
+
+logging:
+  level:
+    com.example.amscopy.mapper: debug
+
+swagger:
+  enabled: true
+
+pagehelper:
+  auto-dialect: mysql
+  params: count=countSql
+  reasonable: false
+  support-methods-arguments: true
+
+
