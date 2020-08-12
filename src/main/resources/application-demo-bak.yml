@@ -63,6 +63,7 @@ spring:
       auto-offset-reset: earliest   #消费规则：从最早开始消费
       key-deserializer: org.apache.kafka.common.serialization.StringSerializer
       value-deserializer: org.apache.kafka.common.serialization.StringSerializer
+
 mybatis:
   configuration:
     #sql语句只打印在控制台
@@ -76,13 +77,42 @@ logging:
   level:
     com.example.amscopy.mapper: debug
 
-swagger:
-  enabled: true
-
 pagehelper:
   auto-dialect: mysql
   params: count=countSql
   reasonable: false
   support-methods-arguments: true
+
+referer:
+  refererDomain:
+    - localhost
+    - 127.0.0.1
+    - 10.25.85.145
+    - 1.119.134.192
+
+swagger:
+  enabled: true
+
+druid:
+  management:
+    enabled: true
+    username: admin
+    password: admin
+
+login:
+  mandatory:
+    check: false
+  captcha:
+    check: false
+  password:
+    check: false
+  sso:
+    check:false
+
+cyberark:
+  first:
+    enable: false
+  second:
+    enable: false
 
 

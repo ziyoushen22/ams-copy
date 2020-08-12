@@ -92,12 +92,13 @@ spring:
       auto-offset-reset: earliest   #消费规则：从最早开始消费
       key-deserializer: org.apache.kafka.common.serialization.StringSerializer
       value-deserializer: org.apache.kafka.common.serialization.StringSerializer
+
 mybatis:
   configuration:
-    #sql语句只打印在控制台
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
     #sql语句只打印在文件中
-  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    #sql语句只打印在控制台
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.example.amscopy.model
 
@@ -105,19 +106,73 @@ logging:
   level:
     com.example.amscopy.mapper: debug
 
-swagger:
-  enabled: true
-
 pagehelper:
   auto-dialect: mysql
   params: count=countSql
   reasonable: false
   support-methods-arguments: true
 
+swagger:
+  enabled: true
+
+druid:
+  management:
+    enabled: true
+    username: admin
+    password: admin
+
+login:
+  mandatory:
+    check: false
+  captcha:
+    check: false
+  password:
+    check: false
+  sso:
+    check:false
+
+cyberark:
+  first:
+    enable: false
+  second:
+    enable: false
+
+esg:
+  grantType: client_credentials
+  accessTokenUrl: http://esg-oauth-stg.paic.com.cn/oauth/oauth2/access_token
+  openApiUrl: http://esg-open-stg.paic.com.cn/open/
+  cleentId: P_fic_ams_service
+  clientSecret: GaU2u7T1
+  mfa:
+    otp:
+      policy:
+        key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        name: FIC-AMS-OTP
+  sms:
+    sender:
+      id: V_GROUP_PSCP3_FIC_AMS_001
+      series:
+        id: PA038_s000000002
+    template:
+      id: YZT190724001
+  mail:
+    system:
+      name: 系统编号
+    department:
+      id: 部门编号
+    template:
+      name: 模板名称
+system:
+  contactus:
+    link: mailto:unique-star_server@xingyoucai.com
+  activate:
+    link: http://xxx/accountActivation/active
+  company:
+    name: 北京微星优财网络科技有限公司
+
 referer:
   refererDomain:
-  - localhost
-  - 127.0.0.1
-  - 10.25.85.145
-  - 1.119.134.192
-
+    - localhost
+    - 127.0.0.1
+    - 10.25.85.145
+    - 1.119.134.192

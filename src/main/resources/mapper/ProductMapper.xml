@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.amscopy.mapper.ProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.amscopy.model.ProductModel">
+        <result column="product_id" property="productId"/>
+        <result column="product_name" property="productName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+    </resultMap>
+
+
+
+    <select id="list" resultMap="BaseResultMap">
+        select * from tbl_ams_product
+    </select>
+
+
+
+</mapper>

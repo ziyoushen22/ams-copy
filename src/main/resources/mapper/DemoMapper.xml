@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.amscopy.mapper.ProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.amscopy.model.ProductModel">
+        <result column="product_id" property="productId"/>
+        <result column="product_name" property="productName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+    </resultMap>
+
+
+    <!-- 新增（批量）仓位下的sku -->
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+        insert into warehouse_loc_sku_lk
+        (house_id,house_code,house_loc_id,
+        house_loc_code,sku_id,sku_code,
+        type,total,unit,active_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.houseId},#{item.houseCode},#{item.houseLocId},
+            #{item.houseLocCode},#{item.skuId},#{item.skuCode},
+            #{item.type},#{item.total},#{item.unit},#{item.activeTime})
+        </foreach>
+    </insert>
+
+    <!-- 删除（批量）仓位下的sku -->
+    <delete id="deleteBatch">
+        delete from warehouse_loc_sku_lk
+        where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="batchUpdateStatus">
+        update ads set status=#{status} where
+        id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 根据资源id查询 -->
+    <select id="getParentStorageById" resultType="com.zh.ecs.modules.annex.vo.AsStorageVo">
+        select ass.* from as_storage ass
+        <where>
+            <if test="orgIds!=null">
+                and ass.org_id IN
+                <foreach item="orgId" collection="orgIds" open="(" separator="," close=")">
+                    #{orgId}
+                </foreach>
+            </if>
+        </where>
+        order by ass.id,ass.sort
+    </select>
+
+</mapper>
