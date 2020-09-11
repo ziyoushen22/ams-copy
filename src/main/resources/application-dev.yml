@@ -33,6 +33,7 @@ spring:
       first:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.jdbc.Driver
+#        driverClassName: com.mysql.cj.jdbc.Driver
         url: jdbc:mysql://10.59.96.1:3306/riskcontrol_v6?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&serverTimeZone=Aisa/Shanghai
         username: root
         password: 1234

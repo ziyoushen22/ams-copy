@@ -1,12 +1,16 @@
 package com.example.amscopy.configuration;
 
-import com.example.amscopy.dto.ResponseEntity;
+import com.alibaba.fastjson.JSONObject;
 import com.example.amscopy.dto.UserLoginDto;
 import com.example.amscopy.exception.AmsErrorCode;
 import com.example.amscopy.exception.AmsException;
 import com.example.amscopy.exception.LoginSessionTimeoutException;
+import com.example.amscopy.model.LogModel;
 import com.example.amscopy.service.api.RoleAuthService;
+import com.example.amscopy.utils.RequestUtil;
 import com.example.amscopy.utils.WebSessionUtil;
+import com.example.amscopy.utils.http.RequestWrapper;
+import com.example.amscopy.utils.http.ResponseWrapper;
 import com.example.amscopy.utils.json.RequestJsonHandlerMethodArgumentResolver;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +36,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Configuration
 @Slf4j
@@ -193,6 +200,76 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
             } finally {
                 long endTime = System.nanoTime();
                 log.info(">>>>>>> completed request [" + request.getRequestURI() + "][" + (endTime - startTime) / 1000 / 1000.0 + "ms]...");
+            }
+
+        }
+    }
+
+    @WebFilter(urlPatterns = "/*")
+    @Order(1)
+    @Configuration
+    public static class AccessLogFilter implements Filter {
+
+        private static List<String> excludeUrlList=new ArrayList<>();
+        private static List<String> streamUrlList=new ArrayList<>();
+        static {
+            excludeUrlList.add("/index");
+            excludeUrlList.add("/word");
+            excludeUrlList.add("/user/captcha");
+
+            streamUrlList.add("/file/upload");
+            streamUrlList.add("/file/productExcel");
+            streamUrlList.add("/file/download");
+            streamUrlList.add("/judge/upload/document");
+        }
+
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+            HttpServletRequest httpRequest= (HttpServletRequest) request;
+            String requestURI = httpRequest.getRequestURI();
+            if (excludeUrlList.contains(requestURI)
+                    ||requestURI.contains("swagger")
+                    ||requestURI.contains("api-docs")
+                    ||requestURI.contains(".zz")
+                    ||requestURI.contains(".exe")
+                    ||requestURI.contains(".js")
+                    ||requestURI.contains(".ico")
+                    ||requestURI.contains(".html")
+            ){
+                chain.doFilter(request,response);
+                return;
+            }
+            String loginUserId = WebSessionUtil.getLoginUserId(httpRequest);
+            if (loginUserId==null){
+                chain.doFilter(request,response);
+                return;
+            }
+            LogModel logModel = new LogModel();
+            logModel.setLogId(UUID.randomUUID().toString().replace("-",""));
+            logModel.setPath(requestURI);
+            logModel.setRequestTime(new Date());
+            logModel.setSessionId(WebSessionUtil.getSessionId(httpRequest));
+            if (streamUrlList.contains(requestURI)||requestURI.contains("/pageOffice")){
+                chain.doFilter(request,response);
+                return;
+            }else {
+                RequestWrapper requestWrapper = new RequestWrapper(httpRequest);
+                ResponseWrapper responseWrapper = new ResponseWrapper((HttpServletResponse) response);
+
+                String requestData="";
+                if (HttpMethod.GET.matches(httpRequest.getMethod())){
+                    requestData= JSONObject.toJSONString(httpRequest.getParameterMap());
+                }else {
+                    requestData= RequestUtil.getBodyString(requestWrapper);
+                }
+                chain.doFilter(request,response);
+                String encoding = response.getCharacterEncoding();
+                String result = responseWrapper.getResponseData(encoding);
+                response.getOutputStream().write(result.getBytes(encoding));
+                logModel.setRequestData(requestData);
+                logModel.setResponseData(result);
+                logModel.setResponseTime(new Date());
+                // todo insert
             }
 
         }
