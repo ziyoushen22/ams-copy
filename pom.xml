@@ -295,7 +295,17 @@
             <artifactId>commons-codec</artifactId>
             <version>1.11</version>
         </dependency>
-
+<!--     自动生成代码               -->
+        <dependency>
+            <groupId>com.gitee.flying-cattle</groupId>
+            <artifactId>mybatis-dsc-generator</artifactId>
+            <version>3.0.7.release</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 
     </dependencies>
 

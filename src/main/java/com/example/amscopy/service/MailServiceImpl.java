@@ -44,12 +44,14 @@ public class MailServiceImpl implements MailService {
             if (StringUtils.isNotEmpty(emailLog.getCc())){
                 messageHelper.setCc(emailLog.getCc().split(","));
             }
+            //附件
             if (attachments!=null){
                 for (MultipartFile multipartFile : attachments) {
                     messageHelper.addAttachment(multipartFile.getOriginalFilename(),multipartFile);
                 }
             }
             messageHelper.setSentDate(emailLog.getSendDate());
+            //静态资源
             if (!CollectionUtils.isEmpty(map)){
                 for (Map.Entry<String, Resource> entry : map.entrySet()) {
                     if (entry.getValue()!=null){
